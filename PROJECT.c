@@ -265,25 +265,62 @@ void showPatients()
         return;
     }
 
-    printf("\n╔════╦════════════╦══════════════════════════╦══════════════╦══════════╦════════════╗\n");
-    printf("║ STT║   Ma BN    ║         Ho Ten           ║    SDT       ║   No     ║ So lan kham║\n");
-    printf("╠════╬════════════╬══════════════════════════╬══════════════╬══════════╬════════════╣\n");
+    const int pageSize = 3;
+    int totalPages = (pCount + pageSize - 1) / pageSize;
+    int currentPage = 1;
 
-    for (int i = 0; i < pCount; i++)
+    do
     {
-        printf("║ %-2d ║ %-10s ║ %-24s ║ %-12s ║ %-8.0lf ║ %-10d ║\n",
-               i + 1,
-               patients[i].cardId,
-               patients[i].name,
-               patients[i].phone,
-               patients[i].debt,
-               patients[i].visitDays);
-    }
+        int startIndex = (currentPage - 1) * pageSize;
+        int endIndex = startIndex + pageSize;
+        if (endIndex > pCount) {
+            endIndex = pCount;
+        }
 
-    printf("╚════╩════════════╩══════════════════════════╩══════════════╩══════════╩════════════╝\n");
+        printf("\n📋 DANH SÁCH BỆNH NHÂN (Trang %d/%d) 📋\n", currentPage, totalPages);
+        printf("╔════╦═══════════╦══════════════════════════╦══════════════════╦═══════════╦═════════════╗\n");
+        printf("║ STT║   Ma BN   ║          Ho Ten          ║       SDT        ║    No     ║ So lan kham ║\n");
+        printf("╠════╬═══════════╬══════════════════════════╬══════════════════╬═══════════╬═════════════╣\n");
+
+        for (int i = startIndex; i < endIndex; i++)
+        {
+            printf("║ %-2d ║ %-9s ║ %-24s ║ %-16s ║ %-9.2lf ║ %-11d ║\n",
+                   i + 1,
+                   patients[i].cardId,
+                   patients[i].name,
+                   patients[i].phone,
+                   patients[i].debt,
+                   patients[i].visitDays);
+        }
+
+        printf("╚════╩═══════════╩══════════════════════════╩══════════════════╩═══════════╩═════════════╝\n");
+
+        if (totalPages > 1) {
+            printf("\n--- Trang hien tai: %d/%d ---\n", currentPage, totalPages);
+            printf("Nhap so trang muon xem (1 - %d), hoac 0 de thoat: ", totalPages);
+            
+            int nextChoice;
+            if (scanf("%d", &nextChoice) != 1) {
+                int c; while ((c = getchar()) != '\n' && c != EOF) {}
+                printf("Loi nhap. Vui long nhap lai.\n");
+                continue;
+            }
+            getchar(); // Clear buffer
+
+            if (nextChoice == 0) {
+                break; // Thoát khỏi vòng lặp phân trang
+            } else if (nextChoice >= 1 && nextChoice <= totalPages) {
+                currentPage = nextChoice;
+            } else {
+                printf("So trang khong hop le.\n");
+            }
+        } else {
+             // Chỉ có 1 trang
+            break;
+        }
+
+    } while (1);
 }
-
-
 // ==============================
 // F05 – TÌM KIẾM THEO TÊN
 // ==============================
@@ -436,15 +473,32 @@ void showHistory()
 // ==============================
 // F09 – THOÁT CHƯƠNG TRÌNH
 // ==============================
+void resetdata()
+{
+    pCount = 0;
+    rCount = 0;
+    printf("Thoat chuong trinh...\n");
+}
+
 int main(void)
 {
-    int choice = 0;
     do
     {
+        int choice = 0;
         printfMenu();
-        printf("Chon chuc nang (1-9): ");
-        scanf("%d", &choice);
-        getchar();
+        do
+        {
+            printf("Chon chuc nang (1-9): ");
+            scanf("%d", &choice);
+            getchar();
+            if (choice < 1 || choice > 9)
+            {
+                printf("Lua chon khong hop le!\n");
+                continue;
+            }
+            else
+                break;
+        } while (1);
 
         switch (choice)
         {
@@ -473,12 +527,11 @@ int main(void)
             showHistory();
             break;
         case 9:
-            printf("Thoat chuong trinh...\n");
+            resetdata();
             break;
         default:
             printf("Lua chon khong hop le!\n");
         }
-    } while (choice != 9);
+    } while (1);
     return 0;
 }
-
