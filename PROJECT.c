@@ -271,7 +271,7 @@ void showPatients()
 
     for (int i = 0; i < pCount; i++)
     {
-        printf("║ %-2d ║ %-10s ║ %-24s ║ %-12s ║ %-8.2lf ║ %-12d ║\n",
+        printf("║ %-2d ║ %-10s ║ %-24s ║ %-12s ║ %-8.0lf ║ %-10d ║\n",
                i + 1,
                patients[i].cardId,
                patients[i].name,
